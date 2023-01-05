@@ -10,7 +10,7 @@ L'objectif du projet est de proposer une solution permettant de mesurer le nivea
 
 ### Matériel utilisé
 
--   1 Capteur de niveau d'eau
+-   1 Sonde de mesure Vega EK21
 -   1 Carte Arduino UNO
 -   1 Module Bluetooth
 -   1 Afficheur LCD
