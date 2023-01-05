@@ -1,6 +1,8 @@
 #include "Ultrasonic.h"
 #include <Wire.h>
 #include "rgb_lcd.h"
+#include <SoftwareSerial.h>
+SoftwareSerial bluetooth(0,1); 
  
 rgb_lcd lcd;
 
@@ -13,6 +15,7 @@ void setup()
 {
     lcd.begin(16, 2);// set up the LCD's number of columns and rows:
     Serial.begin(9600);
+    bluetooth.begin(9600);
 }
 
 void loop()
@@ -25,6 +28,8 @@ void loop()
     lcd.setCursor(0, 0);
     lcd.print(volume);                                 // affichage en cm3
     lcd.print("cm3");
+    if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
+    bluetooth.print(volume); }                       
     delay(2500);
     lcd.clear();
     
@@ -32,6 +37,8 @@ void loop()
     hauteur = 64-ultrasonic.MeasureInCentimeters();
     lcd.print(volume/1000);                            // affichage en L
     lcd.print("L");
+    if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
+    bluetooth.print(volume); }
     delay(2500);
     lcd.clear();
     
@@ -39,6 +46,8 @@ void loop()
     hauteur = 64-ultrasonic.MeasureInCentimeters(); 
     lcd.print((volume/73984)*100);                      // affichage en %
     lcd.print("%");
+    if(Serial.available()) {                            // les données reçues par le moniteur série sont envoyées au port BT
+    bluetooth.print(volume); }
     delay(2500);
     lcd.clear();
 
