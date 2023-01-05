@@ -34,18 +34,20 @@ void loop()
     delay(2500);
     lcd.clear();
     
-    volume = 34*34*hauteur;                         
-    hauteur = 64-ultrasonic.MeasureInCentimeters();
-    lcd.print(volume/1000);                            // affichage en L
-    lcd.print("L");
+    tension = analogRead(A0);                          // Lecture de la valeur de notre capteur, la tension en fonction de la hauteur.
+    hauteur = ((tension-0.4)*64)/1.6;                  // Conversion de la tension en hauteur.
+    volume = (34*34*hauteur)/1000;                     // Calcul du volume de la cuve en L
+    lcd.print(volume);                                 // Affichage en L
+    lcd.print("L");                                    
     if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
     bluetooth.print(volume); }
     delay(2500);
     lcd.clear();
     
-    volume = 34*34*hauteur;
-    hauteur = 64-ultrasonic.MeasureInCentimeters(); 
-    lcd.print((volume/73984)*100);                      // affichage en %
+    tension = analogRead(A0);                          // Lecture de la valeur de notre capteur, la tension en fonction de la hauteur.
+    hauteur = ((tension-0.4)*64)/1.6;                  // Conversion de la tension en hauteur.
+    volume = (34*34*hauteur);                          // Calcul du volume de la cuve en cm3
+    lcd.print((volume/73984)*100);                     // conversion et affichage du volume en %
     lcd.print("%");
     if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
     bluetooth.print(volume); }
