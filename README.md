@@ -2,6 +2,9 @@
   <a href="https://github.com/pangolino30/projet-cuve-cira">
     <img src="https://img.shields.io/badge/D%C3%A9velopp%C3%A9%20par%20les-STI2D%20SIN-yellow" alt="GitHub Actions">
   </a>
+  <a href="">
+    <img src="[https://img.shields.io/badge/D%C3%A9velopp%C3%A9%20par%20les-STI2D%20SIN-yellow](https://img.shields.io/badge/platform-android-lightgrey)" alt="GitHub Actions">
+  </a>
 </p>
 
 # Projet SIN x CIRA
