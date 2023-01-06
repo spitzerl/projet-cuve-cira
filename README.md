@@ -1,6 +1,6 @@
 <p align="center">
   <a href="">
-    <img src="https://img.shields.io/badge/platform-android | arduino-lightgrey" alt="GitHub Actions">
+    <img src="https://img.shields.io/github/size/pangolino30/projet-cuve-cira/app/Projet_CIRA.apk?label=APK%20SIZE&style=for-the-badge" alt="GitHub Actions">
   </a>
 </p>
 
