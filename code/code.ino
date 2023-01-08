@@ -1,17 +1,19 @@
-#include "Ultrasonic.h"
 #include <Wire.h>
-#include "rgb_lcd.h"
-#include <SoftwareSerial.h>
+#include "rgb_lcd.h"            //Pour écran LCD
+#include <SoftwareSerial.h>     //Pour module Bluetooth
 SoftwareSerial bluetooth(2,3); 
  
 rgb_lcd lcd;
 
-Ultrasonic ultrasonic(7); // Déclaration de la broche utilisée par le capteur
+int vegaek21 = 0;   // Variable pour la valeur de la sonde
+long hauteur;
+float tension;
+float volume;
 
 void setup()
 
 {
-    lcd.begin(16, 2);// set up the LCD's number of columns and rows:
+    lcd.begin(16, 2);          // Définit la résolution de l'écran LCD en 16x2
     Serial.begin(9600);
     bluetooth.begin(9600);
 }
@@ -22,36 +24,6 @@ void loop()
     long hauteur;
     float tension;
     float volume;
-
-    tension = analogRead(A0);                          // Lecture de la valeur de notre capteur, la tension en fonction de la hauteur.
-    hauteur = ((tension-0.4)*64)/1.6;                  // Conversion de la tension en hauteur.
-    volume = 34*34*hauteur;                            // Calcul du volume de la cuve en cm3
-    lcd.setCursor(0, 0);
-    lcd.print(volume);                                 // Affichage en cm3
-    lcd.print("cm3");
-    if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
-    bluetooth.print(volume); }                       
-    delay(2500);
-    lcd.clear();
-    
-    tension = analogRead(A0);                          // Lecture de la valeur de notre capteur, la tension en fonction de la hauteur.
-    hauteur = ((tension-0.4)*64)/1.6;                  // Conversion de la tension en hauteur.
-    volume = (34*34*hauteur)/1000;                     // Calcul du volume de la cuve en L
-    lcd.print(volume);                                 // Affichage en L
-    lcd.print("L");                                    
-    if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
-    bluetooth.print(volume); }
-    delay(2500);
-    lcd.clear();
-    
-    tension = analogRead(A0);                          // Lecture de la valeur de notre capteur, la tension en fonction de la hauteur.
-    hauteur = ((tension-0.4)*64)/1.6;                  // Conversion de la tension en hauteur.
-    volume = (34*34*hauteur);                          // Calcul du volume de la cuve en cm3
-    lcd.print((volume/73984)*100);                     // conversion et affichage du volume en %
-    lcd.print("%");
-    if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
-    bluetooth.print(volume); }
-    delay(2500);
-    lcd.clear();
+    valeur = analogRead(A0);     // Lit la valeur de la sonde sur le pin A0
 
 }
