@@ -23,15 +23,13 @@ void loop()
     float volume;
 
     tension = analogRead(A1);                          // Lecture de la tension
-    tension = (tension)*2/410;                         // Conversion binaire en tension
-    hauteur = ((tension-0.4)*56)/1.6;                  // Conversion de la tension en hauteur.
+    tension = (tension)*0.75/173;                         // Conversion binaire en tension
+    hauteur = ((tension-0.48)*56)/0.27;                  // Conversion de la tension en hauteur.
     volume = 34*34*hauteur;                            // Calcul du volume de la cuve en cm3
-    volumeLitre = (34*34*hauteur)/1000;                     // Calcul du volume en litres
-   
-    // Affichage du volume en centimètres cube
     lcd.setCursor(0, 0);
     lcd.print(volume);                                 // Affichage en cm3 sur l'écran LCD
     lcd.print("cm3");
+    lcd.print(analogRead(A1));
     Serial.print(volume);                              // Affichage en cm3 sur le terminal
     Serial.println("cm3");
     if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
@@ -39,28 +37,29 @@ void loop()
     delay(2500);
     lcd.clear();
     
-    // Affichage du volume en litres
     tension = analogRead(A1);      
-    tension = (tension)*2/410;                        
-    hauteur = ((tension-0.4)*56)/1.6;                  // Conversion de la tension en hauteur.
+    tension = (tension)*0.75/173;                        
+    hauteur = ((tension-0.48)*56)/0.27;                  // Conversion de la tension en hauteur.
+    volume = (34*34*hauteur)/1000;                     // Calcul du volume de la cuve en L
     lcd.print(volume);                                 // Affichage en L
     lcd.print("L");   
     Serial.print(volume);                              
-    Serial.println("L");                                 
+    Serial.println("L");    
+    lcd.print(analogRead(A1));                             
     if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
     bluetooth.print(volume); }
     delay(2500);
     lcd.clear();
     
-    // Affichage du volume en %
     tension = analogRead(A1);     
-    tension = (tension)*2/410;                         
-    hauteur = ((tension-0.4)*56)/1.6;                  // Conversion de la tension en hauteur.
+    tension = (tension)*0.75 /173;                         
+    hauteur = ((tension-0.48)*56)/0.27;                  // Conversion de la tension en hauteur.
     volume = (34*34*hauteur);                          // Calcul du volume de la cuve en cm3
     lcd.print((volume/64736)*100);                     // conversion et affichage du volume en %
     lcd.print("%");
     Serial.print((volume/64736)*100);                  
-    Serial.println("%");            
+    Serial.println("%");      
+    lcd.print(analogRead(A1));      
     if(Serial.available()) {                           // les données reçues par le moniteur série sont envoyées au port BT
     bluetooth.print(volume); }
     delay(2500);
