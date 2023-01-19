@@ -19,6 +19,6 @@ L'objectif du projet est de proposer une solution permettant de mesurer le nivea
 
 ![Chaîne d'information](/docs/chaine_info.png)
 
-### Chaîne d'information
+### Algorigramme
 
 ![Chaîne d'information](/docs/algorigramme.png)
