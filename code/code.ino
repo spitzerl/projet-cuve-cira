@@ -23,9 +23,12 @@ void loop()
     float volume;
 
     tension = analogRead(A1);                          // Lecture de la tension
-    tension = (tension)*2/410;                         //Conversion binaire en tension
+    tension = (tension)*2/410;                         // Conversion binaire en tension
     hauteur = ((tension-0.4)*56)/1.6;                  // Conversion de la tension en hauteur.
     volume = 34*34*hauteur;                            // Calcul du volume de la cuve en cm3
+    volumeLitre = (34*34*hauteur)/1000;                     // Calcul du volume en litres
+   
+    // Affichage du volume en centimètres cube
     lcd.setCursor(0, 0);
     lcd.print(volume);                                 // Affichage en cm3 sur l'écran LCD
     lcd.print("cm3");
@@ -36,10 +39,10 @@ void loop()
     delay(2500);
     lcd.clear();
     
+    // Affichage du volume en litres
     tension = analogRead(A1);      
     tension = (tension)*2/410;                        
     hauteur = ((tension-0.4)*56)/1.6;                  // Conversion de la tension en hauteur.
-    volume = (34*34*hauteur)/1000;                     // Calcul du volume de la cuve en L
     lcd.print(volume);                                 // Affichage en L
     lcd.print("L");   
     Serial.print(volume);                              
@@ -49,6 +52,7 @@ void loop()
     delay(2500);
     lcd.clear();
     
+    // Affichage du volume en %
     tension = analogRead(A1);     
     tension = (tension)*2/410;                         
     hauteur = ((tension-0.4)*56)/1.6;                  // Conversion de la tension en hauteur.
