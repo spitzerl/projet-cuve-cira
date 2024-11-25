@@ -1,0 +1,219 @@
+#include <Adafruit_Fingerprint.h>
+#include <SoftwareSerial.h>
+#include <Servo.h>   
+#include <Wire.h>
+#include "DFRobot_LCD.h"
+
+Servo monservo;                // constante appelée "monservo"
+
+SoftwareSerial mySerial(2, 3); // pin #2 is IN from sensor (GREEN wire) and pin #3 is OUT from arduino (WHITE wire)
+SoftwareSerial mySerial1(11,10); // RX, TX
+
+
+
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
+
+DFRobot_LCD lcd(16,2);                //16 characters and 2 lines of show
+unsigned char data[4]={};
+float distance;
+
+
+int bouton = 4;                       // déclare le bouton poussoir sur la PIN 2.
+int etatbouton = 0;                   // variable représentant le bouton soit ouvert ou fermé, on commence à 0 donc fermé.
+int degres = monservo.read();         // déclare un entier qui prendra comme valeur l'angle en degres du servomoteur
+int cigarettes = 0;
+
+const int colorR = 255;
+const int colorG = 177;
+const int colorB = 0;
+
+
+
+unsigned char data_buffer[4] = {0};
+unsigned char CS;
+
+void setup()  
+{
+
+  lcd.init();
+    
+  lcd.setRGB(colorR, colorG, colorB);//If the module is a monochrome screen, you need to shield it
+    
+  
+  
+  mySerial.begin(9600);
+  Serial.begin(9600);
+  pinMode (bouton, INPUT) ;             // le bouton est une entrée.
+  monservo.attach(7);                   // déclare le servomoteur sur le PIN 7
+  monservo.write (0);                   // commencer avec une position à 0°
+  while (!Serial);  // For Yun/Leo/Micro/Zero/...
+  delay(100);
+  Serial.println("\n\nAdafruit finger detect test");
+
+  // set the data rate for the sensor serial port
+  finger.begin(57600);
+  
+  if (finger.verifyPassword()) {
+    Serial.println("Found fingerprint sensor!");
+  } else {
+    Serial.println("Did not find fingerprint sensor :(");
+    while (1) { delay(1); }
+  }
+
+  finger.getTemplateCount();
+  Serial.print("Sensor contains "); Serial.print(finger.templateCount); Serial.println(" templates");
+  Serial.println("Waiting for valid finger...");
+}
+
+void loop()                     // run over and over again
+{
+  lcd.setCursor(0, 0);
+  getFingerprintIDez();
+  delay(50);            //don't ned to run this at full speed.
+}
+
+
+uint8_t getFingerprintID() {
+  uint8_t p = finger.getImage();
+  switch (p) {
+    case FINGERPRINT_OK:
+      Serial.println("Image taken");
+      break;
+    case FINGERPRINT_NOFINGER:
+      Serial.println("No finger detected");
+      return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println("Communication error");
+      return p;
+    case FINGERPRINT_IMAGEFAIL:
+      Serial.println("Imaging error");
+      return p;
+    default:
+      Serial.println("Unknown error");
+      return p;
+  }
+
+  // OK success!
+
+  p = finger.image2Tz();
+  switch (p) {
+    case FINGERPRINT_OK:
+      Serial.println("Image converted");
+      break;
+    case FINGERPRINT_IMAGEMESS:
+      Serial.println("Image too messy");
+      return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println("Communication error");
+      return p;
+    case FINGERPRINT_FEATUREFAIL:
+      Serial.println("Could not find fingerprint features");
+      return p;
+    case FINGERPRINT_INVALIDIMAGE:
+      Serial.println("Could not find fingerprint features");
+      return p;
+    default:
+      Serial.println("Unknown error");
+      return p;
+  }
+  
+  // OK converted!
+  p = finger.fingerFastSearch();
+  if (p == FINGERPRINT_OK) {
+    Serial.println("Found a print match!");
+  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
+    Serial.println("Communication error");
+    return p;
+  } else if (p == FINGERPRINT_NOTFOUND) {
+    Serial.println("Did not find a match");
+    return p;
+  } else {
+    Serial.println("Unknown error");
+    return p;
+  }   
+  
+  // found a match!
+  Serial.print("Found ID #"); Serial.print(finger.fingerID); 
+  Serial.print(" with confidence of "); Serial.println(finger.confidence);
+  return finger.fingerID;
+}
+
+// returns -1 if failed, otherwise returns ID #
+int getFingerprintIDez() {
+  uint8_t p = finger.getImage();
+  if (p != FINGERPRINT_OK)  return -1;
+
+  p = finger.image2Tz();
+  if (p != FINGERPRINT_OK)  return -1;
+
+  p = finger.fingerFastSearch();
+  if (p != FINGERPRINT_OK)  return -1;
+  
+  // found a match!
+  Serial.print("Found ID #"); Serial.print(finger.fingerID); 
+  Serial.print(" with confidence of "); Serial.println(finger.confidence);
+  monservo.write (180);             // faire tourner le servomoteur à 180°
+  delay (1000);                     // attendre 200ms
+
+do{
+     for(int i=0;i<4;i++)
+     {
+       data[i]=mySerial.read();
+     }
+  }while(mySerial.read()==0xff);
+
+  mySerial.flush();
+
+  
+
+  etatbouton = digitalRead(bouton);   // On lit l’état du bouton pour savoir s’il est ouvert ou fermé
+  while (etatbouton == LOW) {
+    etatbouton = digitalRead(bouton);
+    if (etatbouton==HIGH) {             // Si le bouton est pressé
+
+    do{                                 // mesure capteur ultrason
+     for(int i=0;i<4;i++)
+     {
+       data[i]=mySerial.read();
+     }
+  }while(mySerial.read()==0xff);
+
+  mySerial.flush();
+
+  if(data[0]==0xff)
+    {
+      int sum;
+      sum=(data[0]+data[1]+data[2])&0x00FF;
+      if(sum==data[3])
+      {
+        distance=(data[1]<<8)+data[2];
+        if(distance>30)
+          {
+           Serial.print("distance=");
+           Serial.print(distance/10);
+           Serial.println("cm");
+          }else 
+             {
+               Serial.println("Cendrier plein");
+               lcd.print("Cendrier plein");
+
+             }
+      }else Serial.println("ERROR");
+     }
+     delay(100);
+    monservo.write (0);               // Alors on fait revenir le servomoteur a 0°
+    delay (1000);                     // On atttend 1000ms
+    cigarettes += 1;                  // On rajoute +1 au compteur de cigarettes
+    Serial.print ("Vous avez consommés "); Serial.print (cigarettes); Serial.println (" cigarettes aujourd'hui.");
+    lcd.print (" Cigarettes : "); lcd.print (cigarettes);
+     
+
+  
+  
+  return finger.fingerID; 
+
+  
+  
+    }
+  }
+}
